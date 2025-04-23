@@ -1,26 +1,36 @@
 import React, { useEffect, useRef } from "react";
-import { marked } from "marked";
+import { Marked } from "marked";
 import { cn } from "@/lib/utils";
 import "github-markdown-css/github-markdown-light.css";
 import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
 
 // 마크다운 렌더링을 위한 설정
-marked.setOptions({
+const marked = new Marked({
   gfm: true,
   breaks: true,
   pedantic: false,
-  highlight: function (code, lang) {
+});
+
+// 코드 하이라이팅 설정
+const renderer = {
+  code(code: string, language: string | undefined) {
+    const lang = language || '';
     if (lang && hljs.getLanguage(lang)) {
       try {
-        return hljs.highlight(code, { language: lang }).value;
+        const highlighted = hljs.highlight(code, { language: lang }).value;
+        return `<pre><code class="hljs language-${lang}">${highlighted}</code></pre>`;
       } catch (err) {
         console.error(err);
       }
     }
-    return hljs.highlightAuto(code).value;
-  },
-});
+    
+    const highlighted = hljs.highlightAuto(code).value;
+    return `<pre><code class="hljs">${highlighted}</code></pre>`;
+  }
+};
+
+marked.use({ renderer });
 
 interface MarkdownRendererProps {
   content: string;
@@ -33,12 +43,8 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
   // 마크다운 렌더링
   useEffect(() => {
     if (markdownRef.current) {
-      const html = marked.parse(content);
-      markdownRef.current.innerHTML = html;
-
-      // 코드 블록에 highlight.js 적용
-      markdownRef.current.querySelectorAll("pre code").forEach((block) => {
-        hljs.highlightElement(block as HTMLElement);
+      marked.parse(content).then((html) => {
+        markdownRef.current!.innerHTML = html;
       });
     }
   }, [content]);
