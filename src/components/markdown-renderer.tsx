@@ -43,9 +43,16 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
   // 마크다운 렌더링
   useEffect(() => {
     if (markdownRef.current) {
-      marked.parse(content).then((html) => {
-        markdownRef.current!.innerHTML = html;
-      });
+      const result = marked.parse(content);
+      if (result instanceof Promise) {
+        result.then((html) => {
+          if (markdownRef.current) {
+            markdownRef.current.innerHTML = html;
+          }
+        });
+      } else {
+        markdownRef.current.innerHTML = result;
+      }
     }
   }, [content]);
 
