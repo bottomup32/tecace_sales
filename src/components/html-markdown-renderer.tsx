@@ -161,9 +161,9 @@ function convertMarkdownToHtml(markdown: string): string {
   
   // 표 처리
   html = html.replace(tablePattern, (match, headerRow, separatorRow) => {
-    const headers = headerRow.split('|').map(h => h.trim()).filter(Boolean);
+    const headers = headerRow.split('|').map((h: string) => h.trim()).filter(Boolean);
     
-    const thCells = headers.map(h => 
+    const thCells = headers.map((h: string) => 
       `<th class="border border-gray-300 px-4 py-2 bg-gray-100 text-left font-semibold">${h}</th>`
     ).join('');
     
@@ -176,8 +176,8 @@ function convertMarkdownToHtml(markdown: string): string {
     // 이미 테이블 헤더로 처리된 행은 건너뛰기
     if (match.includes('<table')) return match;
     
-    const cells = rowContent.split('|').map(c => c.trim()).filter(Boolean);
-    const tdCells = cells.map(c => 
+    const cells = rowContent.split('|').map((c: string) => c.trim()).filter(Boolean);
+    const tdCells = cells.map((c: string) => 
       `<td class="border border-gray-300 px-4 py-2">${c}</td>`
     ).join('');
     
