@@ -10,8 +10,6 @@ marked.setOptions({
   gfm: true,
   breaks: true,
   pedantic: false,
-  smartLists: true,
-  smartypants: false,
   highlight: function (code, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
